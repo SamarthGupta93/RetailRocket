@@ -6,10 +6,20 @@ class TreeNode:
 class CategoryTree:
     def __init__(self, df_category_tree):
         self.df_category_tree = df_category_tree
+        self.trees = None
+        
+        
+    def build_trees(self):
+        df_rootcats = self.df_category_tree[self.df_category_tree['parentid'].isnull()]
+        self.trees = {}
+        for rootCat in df_rootcats['categoryid'].unique():
+            self.trees[rootCat] = self.create_tree(rootCat)
+        
         
     def get_children(self,cat):
         return self.df_category_tree.query("parentid=="+str(cat))['categoryid'].unique()
 
+    
     def create_tree(self,rootCat):
         rootNode = TreeNode(rootCat)
         children = self.get_children(rootNode.val)
@@ -32,6 +42,18 @@ class CategoryTree:
             if self.search(category,subtree):
                 return True
         return False
+    
+    
+    def get_root_category(self, category):
+        if category is None:
+            return None
+        if self.trees is None:
+            self.build_trees()
+        for rootCat in self.trees:
+            root = self.trees[rootCat]
+            if self.search(int(category), root):    
+                return root.val
+        return None
     
     
     def print_tree(self, root, depth):
