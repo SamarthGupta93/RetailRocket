@@ -59,7 +59,7 @@ class CategoryTree:
     def print_tree(self, root, depth):
         if root is None:
             return
-        print("\t"*depth+"Root:",root.val)
+        print("\t"*depth+"Node:",root.val)
         if root.children is None: return
         for subTree in root.children:
             self.print_tree(subTree,depth+1)
